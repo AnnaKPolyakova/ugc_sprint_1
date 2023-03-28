@@ -1,0 +1,17 @@
+@startuml
+
+skinparam componentStyle uml2
+actor Analysts #lightblue
+component Reports_app as [App that provides reports to analysts] #lightgreen
+component Consumer as [Consumer (always listening \n to get new messages)] #lightgreen
+component Producer as [Producer (api that get \nmessages and sent to kafka) (port: 8003)] #lightgreen
+
+database Kafka as [Kafka (port: 9092)] #orange
+database Clickhouse as [Clickhouse-node \n(cache)] #orange
+
+Analysts <-> Reports_app: request to get report
+Reports_app <-> Clickhouse: request to get data for reports
+Clickhouse <-down- Consumer: save data for analysts
+Kafka -> Consumer: waiting for new messages
+Producer -> Kafka: send new messages
+@enduml

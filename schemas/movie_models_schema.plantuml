@@ -1,0 +1,56 @@
+@startuml
+
+title Movies app
+
+
+class Genre {
+  id: uuid
+  name: str
+  description: str
+  created: datatime
+  modified: datatime
+}
+
+class Person {
+  id: uuid
+  name: str
+  full_name: uuid
+  gender: uuid
+  created: datatime
+  modified: datatime
+}
+
+class FilmWork {
+  id: uuid
+  title: str
+  description: str
+  creation_date: str
+  rating: int
+  type: str
+  certificate: str
+  file_path: str
+  created: datatime
+  modified: datatime
+}
+
+class GenreFilmWork {
+  id: uuid
+  film_work_id: uuid
+  genre_id: uuid
+  created: datatime
+}
+
+class PersonFilmWork {
+  id: uuid
+  film_work_id: uuid
+  person_id: uuid
+  role_id: uuid
+  created: datatime
+}
+
+GenreFilmWork::film_work_id --> FilmWork::id
+GenreFilmWork::genre_id --> Genre::id
+PersonFilmWork::film_work_id --> FilmWork::id
+PersonFilmWork::person_id --> Person::id
+
+@enduml

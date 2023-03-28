@@ -1,0 +1,46 @@
+@startuml
+
+skinparam componentStyle uml2
+actor Client #lightgreen
+component General_API as [General API \n(nginx: 7000)] #lightgreen
+component Auth_proxy as [Auth proxy \n(nginx: 8001)] #lightblue
+component Auth_app as [Auth app \n(nginx: 8000)] #lightgreen
+component ETL as [ETL app \n(nginx: 8000) \n \n(loading data\n (genres, persons) from pg \ninto Elasticsearch)] #lightgreen
+component Admin_panel_app as [Admin panel app \n(nginx: 8000)\n\n(loading data (films) \nfrom pg \ninto Elasticsearch)] #lightgreen
+
+
+database ElasticsearchDB as [Elasticsearch db] #orange
+database ApiRedisDB as [Redis db \n(cache)] #orange
+database ETLRedisDB as [Redis db \n(last saved \nobjects dates)] #orange
+database AdminPanelRedisDB as [Redis db \n(last saved \nobjects dates)] #orange
+
+
+database AuthProxyRedisDB as [Redis db \n \n(bad requests counter)] #orange
+
+database UserPostgresDB as [Postgres db \n \n(users, roles, \npermissions)] #orange
+database AuthRedisDB as [Redis db \n \n(canceled tokens)] #orange
+
+
+database MoviePostgresDB as [MoviePostgres db] #orange
+
+Client -> General_API: request
+General_API <-> Client: response
+General_API <-down-> ElasticsearchDB: get data
+General_API <-down-> ApiRedisDB: get cache
+
+Auth_proxy <-down-> AuthProxyRedisDB: get data
+
+General_API <-> Auth_proxy: token verification, \n get permissions
+Auth_proxy <-> Auth_app: get auth info
+
+Auth_app <-down-> UserPostgresDB: get data
+Auth_app <-down-> AuthRedisDB: get data
+
+ElasticsearchDB <-down- ETL
+MoviePostgresDB -down-> ETL
+ETL <-down-> ETLRedisDB
+
+ElasticsearchDB <-down- Admin_panel_app
+MoviePostgresDB -down-> Admin_panel_app
+Admin_panel_app <-down-> AdminPanelRedisDB
+@enduml

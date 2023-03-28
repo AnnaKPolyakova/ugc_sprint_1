@@ -1,0 +1,60 @@
+@startuml
+
+title Auth app
+
+left to right direction
+
+class User {
+  id: uuid
+  create_at: datatime
+  login: str
+  email: str
+  is_superuser: bool
+  password: str
+}
+
+class UserRoleRelation {
+  id: uuid
+  create_at: datatime
+  user_id: uuid
+  role_id: uuid
+}
+
+class Role {
+  id: uuid
+  create_at: datatime
+  name: str
+  description: str
+}
+
+class Permission {
+  id: uuid
+  create_at: datatime
+  name: str
+  description: str
+  model: str
+  action: str
+}
+
+class RolePermissionRelation {
+  id: uuid
+  create_at: datatime
+  role_id: uuid
+  permission_id: uuid
+}
+
+class LoginHistory {
+  id: uuid
+  create_at: datatime
+  user_id: uuid
+
+}
+
+User::id --> UserRoleRelation::user_id
+Role::id --> UserRoleRelation::role_id
+RolePermissionRelation::role_id --> Role::id
+RolePermissionRelation::permission_id --> Permission::id
+LoginHistory::user_id --> User::id
+
+
+@enduml
