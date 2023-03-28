@@ -2,8 +2,8 @@ import logging
 from datetime import timedelta
 from http import HTTPStatus
 
-from spectree import SpecTree
 from kafka import KafkaProducer
+from spectree import SpecTree
 
 from consumer.settings import KAFKA_URL, consumer_settings
 

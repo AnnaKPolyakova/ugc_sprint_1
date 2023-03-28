@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 from logging.config import dictConfig
 
-
 logging_config = {
         'version': 1,
         'formatters': {'default': {

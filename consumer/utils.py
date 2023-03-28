@@ -1,11 +1,10 @@
 import logging
 import uuid
-
-from spectree import SpecTree
-from kafka import KafkaConsumer
 from datetime import datetime
 
 from clickhouse_driver import Client
+from kafka import KafkaConsumer
+from spectree import SpecTree
 
 from consumer.settings import KAFKA_URL, consumer_settings
 
