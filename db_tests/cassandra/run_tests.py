@@ -27,10 +27,10 @@ class CassandraTest:
             "}"
         )
         self.session.set_keyspace('test')
-        self.session.execute(f"DROP TABLE IF EXISTS views;")
+        self.session.execute("DROP TABLE IF EXISTS views;")
         self.session.execute(
-            f"CREATE TABLE IF NOT EXISTS views (id text, user_id text, " \
-            f"movie_id text, timestamp bigint, PRIMARY KEY(id));"
+            "CREATE TABLE IF NOT EXISTS views (id text, user_id text, "
+            "movie_id text, timestamp bigint, PRIMARY KEY(id));"
         )
 
     def _get_obj_list(self, number=OBJECT_COUNTS):

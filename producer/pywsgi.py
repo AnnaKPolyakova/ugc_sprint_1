@@ -4,7 +4,6 @@ monkey.patch_all()
 
 from producer.producer_app import create_producer_app
 
-
 from gevent.pywsgi import WSGIServer
 
 app = create_producer_app()

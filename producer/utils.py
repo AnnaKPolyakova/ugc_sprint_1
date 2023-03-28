@@ -18,11 +18,11 @@ class ProducerManager:
         self.key: bytes = self._get_key(movies_id, user_id)
         self.movies_id = movies_id
         self.user_id = user_id
-        self.value: bytes = bytes(str(timestamp),'UTF-8')
+        self.value: bytes = bytes(str(timestamp), 'UTF-8')
 
     @staticmethod
     def _get_key(movies_id, user_id):
-        return bytes(user_id + movies_id,'UTF-8')
+        return bytes(user_id + movies_id, 'UTF-8')
 
     def sent_message(self):
         try:
@@ -35,8 +35,8 @@ class ProducerManager:
                 value=self.value,
                 key=self.key,
                 headers=[
-                    ("user_id", bytes(self.user_id,'UTF-8')),
-                    ("movies_id", bytes(self.movies_id,'UTF-8')),
+                    ("user_id", bytes(self.user_id, 'UTF-8')),
+                    ("movies_id", bytes(self.movies_id, 'UTF-8')),
                 ]
             )
         except Exception as error:
@@ -49,4 +49,3 @@ class ProducerManager:
             return {"status": False}, HTTPStatus.BAD_REQUEST
         else:
             return {"status": True}, HTTPStatus.OK
-

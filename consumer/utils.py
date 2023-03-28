@@ -3,7 +3,7 @@ import uuid
 
 from spectree import SpecTree
 from kafka import KafkaConsumer
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from clickhouse_driver import Client
 
@@ -54,5 +54,7 @@ class ConsumerManager:
                     )
                 else:
                     logging.info(
-                        "Message was saved in db: {key}".format(key=message.key)
+                        "Message was saved in db: {key}".format(
+                            key=message.key
+                        )
                     )

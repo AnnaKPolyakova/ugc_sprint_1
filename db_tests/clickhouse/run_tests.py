@@ -30,14 +30,14 @@ class ClickhouseTest:
 
     def _init_test_db(self):
         self.client.execute(
-            f"DROP DATABASE IF EXISTS test ON CLUSTER company_cluster"
+            "DROP DATABASE IF EXISTS test ON CLUSTER company_cluster"
         )
         self.client.execute(
-            f"CREATE DATABASE IF NOT EXISTS test ON CLUSTER company_cluster"
+            "CREATE DATABASE IF NOT EXISTS test ON CLUSTER company_cluster"
         )
         self.client.execute("""
-             CREATE TABLE IF NOT EXISTS test.views ON CLUSTER company_cluster 
-             (event_time DateTime, user_id UUID, 
+             CREATE TABLE IF NOT EXISTS test.views ON CLUSTER company_cluster
+             (event_time DateTime, user_id UUID,
              movie_id UUID, timestamp UInt32)
              Engine=MergeTree() ORDER BY event_time
          """)
