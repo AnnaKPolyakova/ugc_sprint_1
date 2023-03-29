@@ -47,5 +47,4 @@ class ProducerManager:
                 )
             )
             return {"status": False}, HTTPStatus.BAD_REQUEST
-        else:
-            return {"status": True}, HTTPStatus.OK
+        return {"status": True}, HTTPStatus.OK
