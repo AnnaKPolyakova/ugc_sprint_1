@@ -1,4 +1,3 @@
-import logging
 import random
 import uuid
 from datetime import datetime
@@ -44,25 +43,52 @@ class ClickhouseTest:
 
     @measure_time
     def _insert_test(self):
-        logging.info("Start insert_test")
         objs = get_obj_list()
         self.client.execute(
             "INSERT INTO test.views ("
             "event_time, user_id, movie_id, timestamp"
             ") VALUES", objs
         )
-        logging.info("End test insert_test")
 
     @measure_time
     def _get_test(self):
-        logging.info("Start get_test")
         self.client.execute("SELECT * FROM test.views")
-        logging.info("End test get_test")
+
+    def _get_test_from_full_db(self):
+        self._init_test_db()
+        for _ in range(50000):
+            objs = get_obj_list(number=400)
+            self.client.execute(
+                "INSERT INTO test.views ("
+                "event_time, user_id, movie_id, timestamp"
+                ") VALUES", objs
+            )
+
+        @measure_time
+        def start_get_test_from_full_db():
+            self.client.execute("SELECT * FROM test.views")
+
+        @measure_time
+        def start_get_part_test_from_full_db():
+            self.client.execute(
+                "SELECT * FROM test.views WHERE timestamp = 1"
+            )
+
+        @measure_time
+        def start_get_sum_test_from_full_db():
+            self.client.execute(
+                "SELECT sum(timestamp) FROM test.views WHERE timestamp > 50"
+            )
+
+        start_get_test_from_full_db()
+        start_get_part_test_from_full_db()
+        start_get_sum_test_from_full_db()
 
     def run_tests(self):
         self._init_test_db()
         self._insert_test()
         self._get_test()
+        self._get_test_from_full_db()
 
 
 if __name__ == "__main__":

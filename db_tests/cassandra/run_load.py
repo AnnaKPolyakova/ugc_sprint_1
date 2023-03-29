@@ -1,15 +1,31 @@
+import logging
 import random
 import uuid
+from datetime import datetime
+from time import sleep
 
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement
 
-from db_tests.utils import measure_time
-
-OBJECT_COUNTS = 100
+from db_tests.cassandra.run_tests import OBJECT_COUNTS
 
 
-class CassandraTest:
+def get_obj_list(number=OBJECT_COUNTS):
+    objs = []
+    for _ in range(0, number):
+        objs.append(
+            (
+                datetime.utcnow(),
+                uuid.uuid4(),
+                uuid.uuid4(),
+                random.randint(0, 100),
+            )
+        )
+    return objs
+
+
+class CassandraLoad:
+
     def __init__(self):
         self.session = self._get_session()
 
@@ -26,7 +42,6 @@ class CassandraTest:
             "}"
         )
         self.session.set_keyspace('test')
-        self.session.execute("DROP TABLE IF EXISTS views;")
         self.session.execute(
             "CREATE TABLE IF NOT EXISTS views (id text, user_id text, "
             "movie_id text, timestamp bigint, PRIMARY KEY(id));"
@@ -52,48 +67,23 @@ class CassandraTest:
             )
         return batch
 
-    @measure_time
-    def _insert_test(self):
-        objs = self._get_obj_list()
-        self.session.execute(objs)
+    def _insert(self):
+        n = 0
+        while True:
+            sleep(0.01)
+            try:
+                objs = self._get_obj_list()
+                self.session.execute(objs)
+                n += 1
+                logging.info(n)
+            except Exception:
+                pass
 
-    @measure_time
-    def _get_test(self):
-        self.session.execute("SELECT * FROM views")
-
-    def _get_test_from_full_db(self):
+    def run(self):
         self._init_test_db()
-        for _ in range(50000):
-            objs = self._get_obj_list(number=200)
-            self.session.execute(objs)
-
-        @measure_time
-        def start_get_test_from_full_db():
-            self.session.execute("SELECT * FROM test.views")
-
-        @measure_time
-        def start_get_part_test_from_full_db():
-            self.session.execute(
-                "SELECT * FROM test.views WHERE timestamp = 1 ALLOW FILTERING"
-            )
-
-        @measure_time
-        def start_get_sum_test_from_full_db():
-            self.session.execute(
-                "SELECT sum(timestamp) FROM test.views WHERE timestamp = 50 "
-                "ALLOW FILTERING"
-            )
-        start_get_test_from_full_db()
-        start_get_part_test_from_full_db()
-        start_get_sum_test_from_full_db()
-
-    def run_tests(self):
-        self._init_test_db()
-        self._insert_test()
-        self._get_test()
-        self._get_test_from_full_db()
+        self._insert()
 
 
 if __name__ == "__main__":
-    tests = CassandraTest()
-    tests.run_tests()
+    load = CassandraLoad()
+    load.run()

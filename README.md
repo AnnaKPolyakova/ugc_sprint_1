@@ -70,6 +70,15 @@ http://127.0.0.1:8003/v1/doc/swagger/
 * `docker-compose -f clickhouse/docker-compose_clickhouse.yml up -d --build`
 * `python -m db_tests.clickhouse.run_tests`
 
+При необходимости запустить параллельно загрузку данных для нагрузки:
+* `python -m db_tests.clickhouse.run_load.py`
+
 #### Тестирование cassandra
 * `docker-compose -f db_tests/cassandra/docker-compose_cassandra.yml up -d --build`
 * `python -m db_tests.cassandra.run_tests`
+
+При необходимости запустить параллельно загрузку данных для нагрузки:
+* `python -m db_tests.cassandra.run_load.py`
+
+
+[Итоги исследования](db_tests%2Fresearch_results.md)

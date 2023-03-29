@@ -1,6 +1,8 @@
 import logging
-from datetime import datetime
 from logging.config import dictConfig
+from datetime import datetime, timedelta
+
+TESTS_COUNT = 100
 
 logging_config = {
         'version': 1,
@@ -25,8 +27,18 @@ dictConfig(logging_config)
 def measure_time(func):
     def _wrapper(*args, **kwargs):
         try:
-            start = datetime.now()
-            func(*args, **kwargs)
+            max_value = timedelta(minutes=0)
+            min_value = timedelta(minutes=0)
+            all_result = []
+            for _ in range(TESTS_COUNT):
+                start = datetime.now()
+                func(*args, **kwargs)
+                result = datetime.now() - start
+                all_result.append(result)
+                if min_value > result or min_value == timedelta(minutes=0):
+                    min_value = result
+                if max_value < result or max_value == timedelta(minutes=0):
+                    max_value = result
         except Exception as error:
             logging.error(
                 "Test ({test}) error: {error}".format(
@@ -35,10 +47,20 @@ def measure_time(func):
                 )
             )
         else:
+            all_result.sort()
+            all_result_len = len(all_result)
+            if len(all_result) % 2 == 0:
+                v1 = int(all_result_len/2 - 1)
+                v2 = int(all_result_len/2)
+                median = (all_result[v1] + all_result[v2]) / 2
+            else:
+                median = all_result[all_result_len // 2]
             logging.info(
-                "Function: {func}, running time: {time}".format(
+                "Test: {func}, result: {min} - {max}, median: {median}".format(
                     func=func.__name__,
-                    time=datetime.now() - start
+                    min=min_value,
+                    max=max_value,
+                    median=median
                 )
             )
     return _wrapper
