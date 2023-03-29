@@ -19,5 +19,6 @@ logging_config = {
     }
 
 if __name__ == "__main__":
-    dictConfig(logging_config)
-    ConsumerManager().put_data_to_db()
+    while True:
+        dictConfig(logging_config)
+        ConsumerManager().put_data_to_db()

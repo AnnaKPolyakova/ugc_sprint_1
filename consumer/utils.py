@@ -6,6 +6,7 @@ from clickhouse_driver import Client
 from kafka import KafkaConsumer
 from spectree import SpecTree
 
+from consumer.backoff import backoff
 from consumer.settings import KAFKA_URL, consumer_settings
 
 consumer_doc = SpecTree(
@@ -17,6 +18,7 @@ class ConsumerManager:
     def __init__(self):
         self.client = Client(host=consumer_settings.clickhouse_host)
 
+    @backoff()
     def put_data_to_db(self):
         logging.info("kafka url: {url}".format(url=KAFKA_URL))
         try:
