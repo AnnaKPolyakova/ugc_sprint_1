@@ -24,6 +24,7 @@ class ConsumerManager:
         try:
             consumer = KafkaConsumer(
                 consumer_settings.topic,
+                enable_auto_commit=False,
                 bootstrap_servers=[KAFKA_URL],
                 auto_offset_reset='earliest',
                 group_id=consumer_settings.group_id,
@@ -54,6 +55,7 @@ class ConsumerManager:
                         )
                     )
                 else:
+                    consumer.commit()
                     logging.info(
                         "Message was saved in db: {key}".format(
                             key=message.key
