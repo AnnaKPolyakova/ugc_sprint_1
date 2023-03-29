@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     group_id: str
     clickhouse_host: str
     clickhouse_batch_size: int
+
     class Config:
         env_file = os.path.join(BASE_DIR, ".env")
         env_file_encoding = "utf-8"

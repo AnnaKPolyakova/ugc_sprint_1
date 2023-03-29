@@ -72,4 +72,3 @@ class ConsumerManager:
                         )
                     )
                     messages_batch = []
-
