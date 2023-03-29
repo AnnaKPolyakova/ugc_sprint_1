@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 
 from clickhouse_driver import Client
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, OffsetAndMetadata, TopicPartition
 from spectree import SpecTree
 
 from consumer.backoff import backoff
@@ -21,6 +21,7 @@ class ConsumerManager:
     @backoff()
     def put_data_to_db(self):
         logging.info("kafka url: {url}".format(url=KAFKA_URL))
+        messages_batch = []
         try:
             consumer = KafkaConsumer(
                 consumer_settings.topic,
@@ -34,19 +35,23 @@ class ConsumerManager:
         else:
             logging.info("consumer: {consumer}".format(consumer=consumer))
             for message in consumer:
+                messages_batch.append(
+                    (
+                        datetime.utcnow(),
+                        uuid.UUID(message.key.decode('utf-8')[:36]),
+                        uuid.UUID(message.key.decode('utf-8')[36:]),
+                        int(message.value.decode('utf-8'))
+                    )
+                )
+                if len(messages_batch) < \
+                        consumer_settings.clickhouse_batch_size:
+                    continue
                 try:
                     logging.info("Start save message to db")
                     self.client.execute(
                         "INSERT INTO default.movies_logs ("
                         "event_time, user_id, movie_id, timestamp"
-                        ") VALUES", [
-                            (
-                                datetime.utcnow(),
-                                uuid.UUID(message.key.decode('utf-8')[:36]),
-                                uuid.UUID(message.key.decode('utf-8')[36:]),
-                                int(message.value.decode('utf-8')),
-                            )
-                        ]
+                        ") VALUES", messages_batch
                     )
                 except Exception as error:
                     logging.error(
@@ -55,9 +60,16 @@ class ConsumerManager:
                         )
                     )
                 else:
-                    consumer.commit()
+                    offsets = {
+                            TopicPartition(
+                                consumer_settings.topic, 0
+                            ): OffsetAndMetadata(message.offset + 1, None)
+                        }
+                    consumer.commit(offsets=offsets)
                     logging.info(
-                        "Message was saved in db: {key}".format(
-                            key=message.key
+                        "Messages was saved in db: {mess}".format(
+                            mess=messages_batch
                         )
                     )
+                    messages_batch = []
+
