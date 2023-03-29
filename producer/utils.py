@@ -31,7 +31,7 @@ class ProducerManager:
             )
             producer = KafkaProducer(bootstrap_servers=[KAFKA_URL])
             producer.send(
-                topic=consumer_settings.TOPIC,
+                topic=consumer_settings.topic,
                 value=self.value,
                 key=self.key,
                 headers=[

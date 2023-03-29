@@ -15,16 +15,16 @@ consumer_doc = SpecTree(
 
 class ConsumerManager:
     def __init__(self):
-        self.client = Client(host=consumer_settings.CLICKHOUSE_HOST)
+        self.client = Client(host=consumer_settings.clickhouse_host)
 
     def put_data_to_db(self):
         logging.info("kafka url: {url}".format(url=KAFKA_URL))
         try:
             consumer = KafkaConsumer(
-                consumer_settings.TOPIC,
+                consumer_settings.topic,
                 bootstrap_servers=[KAFKA_URL],
                 auto_offset_reset='earliest',
-                group_id=consumer_settings.GROUP_ID,
+                group_id=consumer_settings.group_id,
             )
         except Exception as error:
             logging.error("consumer error: {error}".format(error=error))

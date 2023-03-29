@@ -13,11 +13,11 @@ load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"), override=True)
 
 
 class Settings(BaseSettings):
-    KAFKA_HOST: str
-    KAFKA_PORT: str
-    TOPIC: str
-    GROUP_ID: str
-    CLICKHOUSE_HOST: str
+    kafka_host: str
+    kafka_port: str
+    topic: str
+    group_id: str
+    clickhouse_host: str
 
     class Config:
         env_file = os.path.join(BASE_DIR, ".env")
@@ -26,6 +26,6 @@ class Settings(BaseSettings):
 
 consumer_settings = Settings()
 KAFKA_URL = "{host}:{port}".format(
-    host=consumer_settings.KAFKA_HOST,
-    port=consumer_settings.KAFKA_PORT
+    host=consumer_settings.kafka_host,
+    port=consumer_settings.kafka_port
 )

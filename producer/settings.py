@@ -13,9 +13,9 @@ load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"), override=True)
 
 
 class Settings(BaseSettings):
-    KAFKA_HOST: str
-    KAFKA_PORT: int
-    TOPIC: str
+    kafka_host: str
+    kafka_port: int
+    topic: str
 
     class Config:
         env_file = os.path.join(BASE_DIR, ".env")
@@ -24,6 +24,6 @@ class Settings(BaseSettings):
 
 producer_settings = Settings()
 KAFKA_URL = "{host}:{port}".format(
-    host=producer_settings.KAFKA_HOST,
-    port=producer_settings.KAFKA_PORT
+    host=producer_settings.kafka_host,
+    port=producer_settings.kafka_port
 )
