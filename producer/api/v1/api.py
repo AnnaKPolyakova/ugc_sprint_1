@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint, request
 
-from producer.models import LogsCreate
+from producer.api.v1.models.models import LogsCreate
 from producer.utils import ProducerManager, producer_doc
 
 producer_api = Blueprint("consumer", __name__)

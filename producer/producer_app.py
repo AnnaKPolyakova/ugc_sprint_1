@@ -3,7 +3,7 @@ from logging.config import dictConfig
 
 from flask import Flask
 
-from producer.api import producer_api
+from producer.api.v1.api import producer_api
 from producer.utils import producer_doc
 
 
