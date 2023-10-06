@@ -1,84 +1,82 @@
-# Проектная работа 8 спринта
+# Sprint 8 project work
 
-Командная работа https://github.com/AnnaKPolyakova/ugc_sprint_1
+API for loading analytical data into kafka -> clickhouse
 
-API для загрузки аналитических данных в kafka -> clickhouse
-
-Технологии и требования:
+Technologies and requirements:
 ```
 Python 3.9+
 kafka
 clickhouse
 ```
 
-### Настройки Docker
+### Docker Settings
 
-##### Установка
+##### Installation
 
-* [Подробное руководство по установке](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+* [Detailed installation guide](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 
-### Настройки Docker-compose
+### Docker-compose settings
 
-##### Установка
+##### Installation
 
-* [Подробное руководство по установке](https://docs.docker.com/compose/install/)
+* [Detailed Installation Guide](https://docs.docker.com/compose/install/)
 
-### Запуск приложения
+### Launch the application
 
-#### Перед запуском проекта создаем переменные окружения
-Создаем в корне .env и добавляем в него необходимые переменные  
-Пример в .env.example - для запуска приложения целиком в docker  
-Пример в .env.example-local - для запуска приложения локально и частично в docker
+#### Before starting the project, create environment variables
+Create a .env in the root and add the necessary variables to it
+Example in .env.example - to run the entire application in docker
+Example in .env.example-local - to run the application locally and partially in docker
 
-#### Запуск полностью в контейнерах docker: 
-kafka, api (produсer), consumer (сохраняет данные), clickhouse
+#### Run completely in docker containers:
+kafka, api (producer), consumer (saves data), clickhouse
 
 * `docker-compose -f docker-compose-api.yml up -d --build`
 * `docker-compose -f clickhouse/docker-compose_clickhouse.yml up -d --build`
-* `chmod +x clickhouse/entrypoint.sh` - делаем файл исполняемым  
-* `clickhouse/entrypoint.sh` - запускаем создание таблиц на шардах
+* `chmod +x clickhouse/entrypoint.sh` - make the file executable
+* `clickhouse/entrypoint.sh` - start creating tables on shards
 
-Для остановки контейнера:  
+To stop the container:
 * `docker-compose -f docker-compose-api.yml down --rmi all --volumes`
 * `docker-compose -f clickhouse/docker-compose_clickhouse.yml down --rmi all --volumes`
 
 
-#### Запуск проекта частично в контейнерах docker (kafka, clickhouse)
+#### Running the project partially in docker containers (kafka, clickhouse)
 
 * `docker-compose -f docker-compose-api-local.yml up -d --build`
 * `docker-compose -f clickhouse/docker-compose_clickhouse.yml up -d --build`
 * `python -m consumer.consumer_app`
 * `python -m producer.producer_app`
-* `chmod +x clickhouse/entrypoint.sh` - делаем файл исполняемым  
-* `clickhouse/entrypoint.sh` - запускаем создание таблиц на шардах
+* `chmod +x clickhouse/entrypoint.sh` - make the file executable
+* `clickhouse/entrypoint.sh` - start creating tables on shards
 
-Для остановки контейнера:  
+To stop the container:
 * `docker-compose -f docker-compose-api-local.yml down --rmi all --volumes`
 * `docker-compose -f clickhouse/docker-compose_clickhouse.yml down --rmi all --volumes`
 
 
-Документация по адресу:
-http://127.0.0.1:8003/v1/doc/redoc/ or или
+Documentation at:
+http://127.0.0.1:8003/v1/doc/redoc/ or or
 http://127.0.0.1:8003/v1/doc/swagger/
 
 
-### Тестирование  
+### Testing
 
-Результаты будут отображены в терминале
+The results will be displayed in the terminal
 
-#### Тестирование clickhouse
+#### Testing clickhouse
 * `docker-compose -f clickhouse/docker-compose_clickhouse.yml up -d --build`
 * `python -m db_tests.clickhouse.run_tests`
 
-При необходимости запустить параллельно загрузку данных для нагрузки:
+If necessary, start loading data for the load in parallel:
 * `python -m db_tests.clickhouse.run_load.py`
 
-#### Тестирование cassandra
+#### Testing cassandra
 * `docker-compose -f db_tests/cassandra/docker-compose_cassandra.yml up -d --build`
 * `python -m db_tests.cassandra.run_tests`
 
-При необходимости запустить параллельно загрузку данных для нагрузки:
+If necessary, start loading data for the load in parallel:
 * `python -m db_tests.cassandra.run_load.py`
 
 
-[Итоги исследования](db_tests%2Fresearch_results.md)
+[Research results](db_tests%2Fresearch_results.md)
