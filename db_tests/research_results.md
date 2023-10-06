@@ -1,13 +1,13 @@
-### Данные по итогам 100 подряд проведенных тестов
+### Data based on the results of 100 consecutive tests
 
 
-#### Тестируем cassanda:  
+#### Testing cassanda:
 
-Схема данных: 2 node (реплики)
+Data scheme: 2 node (replicas)
 
-Без нагрузки
+Without load
 
-| Тест                                      |     min - max, s:ms     | median, s:ms |
+| test                                      |     min - max, s:ms     | median, s:ms |
 |-------------------------------------------|:-----------------------:|:------------:|
 | insert test                               |  0: 5 435 - 0: 15 572   |   0: 6 488   |
 | get all from 2 000 000 obj test           | 0: 49 099 - 0: 902 875  |  0: 72 526   |
@@ -15,7 +15,7 @@
 | SELECT sum(timestamp) FROM test.views WHERE timestamp > 50 from 10 000 000 obj test |        get error        |  get error   |
 
 
-С нагрузкой (запущен параллельно процесс записывающий по 100 записей в 0,01 сек)
+With load (a parallel process is running, recording 100 records per 0.01 sec)
 
 | Тест        |     min - max, s:ms     | median, s:ms |
 |-------------|:-----------------------:|:------------:|
@@ -24,11 +24,11 @@
 | SELECT sum(timestamp) FROM test.views WHERE timestamp > 50 from 10 000 000 obj test | get error    |  get error     |
 
 
-#### Тестируем clickhouse:  
+#### Testing clickhouse:
 
-Схема данных: 4 node (2 реплики, 2 партиции)
+Data schema: 4 node (2 replicas, 2 partitions)
 
-Без нагрузки
+Without load
 
 | Тест                                               |     min - max, s:ms     | median, s:ms |
 |----------------------------------------------------|:-----------------------:|:------------:|
@@ -38,7 +38,7 @@
 | SELECT sum(timestamp) FROM test.views WHERE timestamp > 50 from 10 000 000 obj test | 0: 038 698 - 0: 100 078 |  0: 041 365  |
 
 
-С нагрузкой (запущен параллельно процесс записывающий по 100 записей в 0,01 сек)
+With load (a parallel process is running, recording 100 records per 0.01 sec)
 
 | Тест        |     min - max, s:ms     | median, s:ms |
 |-------------|:-----------------------:|:------------:|
@@ -47,20 +47,20 @@
 | SELECT sum(timestamp) FROM test.views WHERE timestamp > 50 from 10 000 000 obj test | 0: 047 936 - 0: 091 991 |  0: 054 389  |
 
 
-В процессе тестирования Cassandra были выявлены следующие минусы:  
-- получаем ошибку при агрегирующем запросе при базе с 10 000 000 объектов, 
-  хотя аналогичный запрос при почти пустой базе проходит
-- сложная настройка конфигураций Пример: 
-1) Нужно очень хорошо продумать заранее 
-  какие запросы будут отправляться в базу перед тем как формировать ключ 
-  партиции и прочее. 
-2) Изначально планировала 4 node (2 партиции и 2 реплики) для сопоставимости 
-   тестирования с clickhouse. Но докер не тянет больше 3 (или возвращаемся к 1 
-   пункту - сложно конфигурировать или не тянет по ресурсам, склоняюсь ко 2)
-пр.
+During testing of Cassandra, the following disadvantages were identified:
+- we get an error when making an aggregation request with a database with 10,000,000 objects,
+   although a similar request passes with an almost empty database
+- complex configuration settings Example:
+1) You need to think very well in advance
+   what queries will be sent to the database before generating the key?
+   parties and so on.
+2) Initially I planned 4 nodes (2 partitions and 2 replicas) for comparability
+    testing with clickhouse. But docker doesn't pull more than 3 (or go back to 1
+    point - it’s difficult to configure or doesn’t have the resources, I’m inclined towards 2)
+etc.
 
-Дополнительно почитав сравнительные характеристики Cassandra и clickhouse в 
-интернете сделала вывод, что сам по себе clickhouse более молодая, удобная, 
-быстрая бд. 
+Additionally, read the comparative characteristics of Cassandra and clickhouse in
+on the Internet I concluded that clickhouse itself is younger, more convenient,
+fast database
 
-Итог: выбираем clickhouse  
+Conclusion: choose clickhouse
