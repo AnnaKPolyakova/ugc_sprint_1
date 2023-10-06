@@ -6,7 +6,7 @@ Technologies and requirements:
 ```
 Python 3.9+
 kafka
-clickhouse
+clickhouse 
 ```
 
 ### Docker Settings
